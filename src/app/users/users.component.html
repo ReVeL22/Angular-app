@@ -1,0 +1,247 @@
+<div class="container mb-5">
+  <div class="row mt-5">
+    <div>
+      <button *ngIf="!newUserActive" (click)="newUserBtn()" class="btn-lg btn-success">Create new User</button>
+      <button *ngIf="newUserActive" (click)="newUserBtn()" class="btn-lg btn-danger">Cancel</button>
+    </div>
+
+    <div *ngIf="newUserActive" class="col-12 p-1 mb-5">
+      <form [formGroup]="addUser" (ngSubmit)="onSubmit()">
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="inputFirstNameCreate">First Name</label>
+            <input formControlName="first_name" required type="text" class="form-control" id="inputFirstNameCreate" placeholder="First Name">
+            <p *ngIf="addUser.get('first_name').invalid && addUser.get('first_name').touched" style="margin: 0; color: red;">Please enter a valid value!</p>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="inputLastNameCreate">Last Name</label>
+            <input formControlName="last_name" required type="text" class="form-control" id="inputLastNameCreate" placeholder="Last Name">
+            <p *ngIf="addUser.get('last_name').invalid && addUser.get('last_name').touched" style="margin: 0; color: red;">Please enter a valid value!</p>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="inputEmailCreate">Email</label>
+            <input formControlName="email" email required type="email" class="form-control" id="inputEmailCreate" placeholder="Email">
+            <p *ngIf="addUser.get('email').invalid && addUser.get('email').touched" style="margin: 0; color: red;">Please enter a valid value!</p>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="inputPhoneCreate">Phone</label>
+            <input formControlName="phone" required type="text" class="form-control" id="inputPhoneCreate" pattern="[0-9]{3}-[0-9]{3}-[0-9]{3}" placeholder="e.g. 000-000-000">
+            <p *ngIf="addUser.get('phone').invalid && addUser.get('phone').touched" style="margin: 0; color: red;">Please enter a valid value!</p>
+          </div>
+        </div>
+        <div formGroupName="address">
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="inputCountryCreate">Country</label>
+            <input formControlName="country" required type="text" class="form-control" id="inputCountryCreate" placeholder="Country">
+            <p *ngIf="addUser.get(['address','country']).invalid && addUser.get(['address','country']).touched" style="margin: 0; color: red;">Please enter a valid value!</p>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="inputCityCreate">City</label>
+            <input formControlName="city" required type="text" class="form-control" id="inputCityCreate" placeholder="City">
+            <p *ngIf="addUser.get(['address','city']).invalid && addUser.get(['address','city']).touched" style="margin: 0; color: red;">Please enter a valid value!</p>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="inputStreetCreate">Street</label>
+            <input formControlName="street" required type="text" class="form-control" id="inputStreetCreate" placeholder="e.g. Street 22">
+            <p *ngIf="addUser.get(['address','street']).invalid && addUser.get(['address','street']).touched" style="margin: 0; color: red;">Please enter a valid value!</p>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="inputPostalCodeCreate">Postal Code</label>
+            <input formControlName="postal_code" required type="text" class="form-control" id="inputPostalCodeCreate" pattern="[0-9]{2}-[0-9]{3}" placeholder="e.g. 22-333">
+            <p *ngIf="addUser.get(['address','postal_code']).invalid && addUser.get(['address','postal_code']).touched" style="margin: 0; color: red;">Please enter a valid value!</p>
+          </div>
+        </div>
+        </div>
+        <button [disabled]="!addUser.valid" type="submit" class="btn btn1 mt-2 btn-success">Save</button>
+      </form>
+    </div>
+
+    <ul class="list-group">
+
+      <li *ngFor="let number of users; let i = index" class="list-group-item mb-2 userItem">
+        <div>
+          <span>
+            <img src="https://image.flaticon.com/icons/svg/1246/1246351.svg" height="70px" alt="">
+          </span>
+          <span class="userDetails">
+            {{number.first_name}} {{number.last_name}} 
+          </span>
+          <span class="userEmail">
+            {{number.email}}
+          </span>
+          <span class="editButtons">
+            <button *ngIf="isChosen != number || whichButton != 1" (click)="klik(number, 1)" class="mr-2 bg-secondary">View</button>
+            <button *ngIf="isChosen == number && whichButton == 1" (click)="klik(number, 1)" class="mr-2 bg-secondary">Hide</button>
+            <button *ngIf="isChosen != number || whichButton != 2" (click)="klik(number, 2)"
+              class="mr-2 bg-warning">Edit</button>
+            <button *ngIf="isChosen == number && whichButton == 2" (click)="klik(number, 2)"
+              class="mr-2 bg-warning">Cancel</button>
+            <button (click)="userDelete(number.id)" class="bg-danger">Delete</button>
+          </span>
+        </div>
+
+        <div class="{{number}} mt-2" *ngIf="isChosen == number && whichButton == 1">
+          <form>
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="inputFirstName">First Name</label>
+                <input type="email" class="form-control" id="inputFirstName" disabled
+                  placeholder="{{number.first_name}}">
+              </div>
+              <div class="form-group col-md-6">
+                <label for="inputLastName">Last Name</label>
+                <input type="text" class="form-control" id="inputLastName" disabled
+                  placeholder="{{number.last_name}}">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="inputEmail">Email</label>
+                <input type="email" email class="form-control" id="inputEmail" disabled placeholder="{{number.email}}">
+              </div>
+              <div class="form-group col-md-6">
+                <label for="inputPhone">Phone</label>
+                <input type="text" class="form-control" id="inputPhone" disabled placeholder="{{number.phone}}">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="inputCountry">Country</label>
+                <input type="text" class="form-control" id="inputCountry" disabled
+                  placeholder="{{number.address.country}}">
+              </div>
+              <div class="form-group col-md-6">
+                <label for="inputCity">City</label>
+                <input type="text" class="form-control" id="inputCity" disabled placeholder="{{number.address.city}}">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="inputStreet">Street</label>
+                <input type="text" class="form-control" id="inputStreet" disabled
+                  placeholder="{{number.address.street}}">
+              </div>
+              <div class="form-group col-md-6">
+                <label for="inputPostalCode">Postal Code</label>
+                <input type="text" class="form-control" id="inputPostalCode" disabled
+                  placeholder="{{number.address.postal_code}}">
+              </div>
+            </div>
+          </form>
+
+          <div class="mt-2">
+            <span style="font-size: 28px; font-weight: 600;">Posts</span>
+            <button *ngIf="!showPostsBtnActive" (click)="showPostsBtn()" class="btn-md btn-success ml-5">Show posts</button>
+            <button *ngIf="showPostsBtnActive" (click)="showPostsBtn()" class="btn-md btn-secondary ml-5">Hide posts</button>
+            <button *ngIf="!newPostBtnActive" (click)="newPostBtn()" class="btn-md btn-success ml-5">Create new
+              post</button>
+            <button *ngIf="newPostBtnActive" (click)="newPostBtn()" class="btn-md btn-danger ml-5">Cancel new
+              post</button>
+            <div *ngIf="newPostBtnActive" class="addPost mt-4 mb-4" style="background-color: rgb(212, 211, 211);">
+              <form [formGroup]="addPost" (ngSubmit)="onSubmitPost(number.id)">
+                <h4 style="text-align: center; padding: 15px; border-bottom: 1px solid rgb(170, 110, 110);">Create new
+                  Post by {{number.first_name}} {{number.last_name}}</h4>
+
+                <div class="form-group col-md-10 offset-md-1 text-center">
+                  <label for="inputPostTitle"><strong>Title</strong></label>
+                  <input formControlName="title" required type="text" class="form-control" id="inputPostTitle" placeholder="Title" maxlength="35">
+                  <p *ngIf="addPost.get('title').invalid && addPost.get('title').touched" style="margin: 0; color: red;">Please enter a valid value!</p>
+                </div>
+
+                <div class="form-group col-md-10 offset-md-1 text-center">
+                  <label for="inputPostBody"><strong>Body</strong></label>
+                  <textarea formControlName="body" required type="textarea" class="form-control" id="inputPostBody" placeholder="Post Body"
+                    maxlength="300" rows="4"></textarea>
+                    <p *ngIf="addPost.get('body').invalid && addPost.get('body').touched" style="margin: 0; color: red;">Please enter a valid value!</p>
+                </div>
+
+                <button [disabled]="!addPost.get('body').valid || !addPost.get('title').valid" type="submit" class="btn btn1 mt-2 mb-2 btn-success">Save</button>
+              </form>
+            </div>
+            <ng-container *ngIf="showPostsBtnActive">
+            <ul *ngFor="let post of posts; let i = index" class="list-group mt-2 userPosts">
+              <li *ngIf="post.user_id == number.id" class="list-group-item posts mb-1"><strong>Post {{i + 1}}#</strong>
+                <ul class="group-list">
+                  <li class="list-group-item mb-2"><strong>Title:
+                    </strong>{{post.title}}</li>
+                  <li class="list-group-item"><strong>Body:
+                    </strong><div><textarea id="textarea" readonly disabled rows="4">{{post.body}}</textarea></div></li>
+                </ul>
+              </li>
+            </ul>
+            </ng-container>
+          </div>
+        </div>
+
+        <div class="{{number}}" *ngIf="isChosen == number && whichButton == 2">
+          <h2 class="text-center mb-3">Enter new data:</h2>
+          <form [formGroup]="putUser" (ngSubmit)="onSubmitPut(number.id)">
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="inputFirstNameEdit">First Name</label>
+                <input formControlName="first_name" required type="text" class="form-control" id="inputFirstNameEdit" placeholder="First Name">
+                <p *ngIf="putUser.get('first_name').invalid && putUser.get('first_name').touched" style="margin: 0; color: red;">Please enter a valid value!</p>
+              </div>
+              <div class="form-group col-md-6">
+                <label for="inputLastNameEdit">Last Name</label>
+                <input formControlName="last_name" required type="text" class="form-control" id="inputLastNameEdit" placeholder="Last Name">
+                <p *ngIf="putUser.get('last_name').invalid && putUser.get('last_name').touched" style="margin: 0; color: red;">Please enter a valid value!</p>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="inputEmailEdit">Email</label>
+                <input formControlName="email" email required type="email" class="form-control" id="inputEmailEdit" placeholder="Email">
+                <p *ngIf="putUser.get('email').invalid && putUser.get('email').touched" style="margin: 0; color: red;">Please enter a valid value!</p>
+              </div>
+              <div class="form-group col-md-6">
+                <label for="inputPhoneEdit">Phone</label>
+                <input formControlName="phone" required type="text" class="form-control" id="inputPhoneEdit" pattern="[0-9]{3}-[0-9]{3}-[0-9]{3}" placeholder="e.g. 000-000-000">
+                <p *ngIf="putUser.get('phone').invalid && putUser.get('phone').touched" style="margin: 0; color: red;">Please enter a valid value!</p>
+              </div>
+            </div>
+            <div formGroupName="address">
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="inputCountryEdit">Country</label>
+                <input formControlName="country" required type="text" class="form-control" id="inputCountryEdit" placeholder="Country">
+                <p *ngIf="putUser.get(['address','country']).invalid && putUser.get(['address','country']).touched" style="margin: 0; color: red;">Please enter a valid value!</p>
+              </div>
+              <div class="form-group col-md-6">
+                <label for="inputCityEdit">City</label>
+                <input formControlName="city" required type="text" id="inputCityEdit" class="form-control" placeholder="City">
+                <p *ngIf="putUser.get(['address','city']).invalid && putUser.get(['address','city']).touched" style="margin: 0; color: red;">Please enter a valid value!</p>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="inputStreetEdit">Street</label>
+                <input formControlName="street" required type="text" class="form-control" id="inputStreetEdit" placeholder="e.g. Street 22">
+                <p *ngIf="putUser.get(['address','street']).invalid && putUser.get(['address','street']).touched" style="margin: 0; color: red;">Please enter a valid value!</p>
+              </div>
+              <div class="form-group col-md-6">
+                <label for="inputPostalCodeEdit">Postal Code</label>
+                <input formControlName="postal_code" required type="text" class="form-control" id="inputPostalCodeEdit" pattern="[0-9]{2}-[0-9]{3}" placeholder="e.g. 22-333">
+                <p *ngIf="putUser.get(['address','postal_code']).invalid && putUser.get(['address','postal_code']).touched" style="margin: 0; color: red;">Please enter a valid value!</p>
+              </div>
+            </div>
+            </div>
+            <button [disabled]="!putUser.valid" type="submit" class="btn btn1 mt-2 btn-success">Save</button>
+          </form>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>

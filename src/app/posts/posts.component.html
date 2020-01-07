@@ -1,0 +1,108 @@
+<div class="container mb-5">
+    <div class="text-center">
+      <button *ngIf="!newPostBtnActive" (click)="newPostBtn()" class="btn-lg btn-success mt-5">Create new post</button>
+      <button *ngIf="newPostBtnActive" (click)="newPostBtn()" class="btn-lg btn-danger mt-5">Cancel new post</button>
+    </div>
+  
+    <div *ngIf="newPostBtnActive" class="addPost mt-4" style="background-color: rgb(212, 211, 211);">
+      <form [formGroup]="addPost" (ngSubmit)="onSubmitPost()">
+        <h4 style="text-align: center; padding: 15px; border-bottom: 1px solid rgb(170, 110, 110);">Create new Post</h4>
+        <div class="form-row text-center">
+          <div class="form-group col-md-5 offset-md-1">
+            <label for="inputUserPostsCreate"><strong>User</strong></label>
+            <select formControlName="user_id" required class="form-control" id="inputUserPostsCreate">
+
+              <option *ngFor="let user of users" value="{{user.id}}">{{user.first_name}} {{user.last_name}} | {{user.email}}</option>
+              </select>
+              <p *ngIf="addPost.get('user_id').invalid && addPost.get('user_id').touched" style="margin: 0; color: red;">Please enter a valid value!</p>
+          </div>
+          <div class="form-group col-md-5">
+            <label for="inputTitlePostsCreate"><strong>Title</strong></label>
+            <input formControlName="title" required type="text" class="form-control" id="inputTitlePostsCreate" placeholder="Title">
+            <p *ngIf="addPost.get('title').invalid && addPost.get('title').touched" style="margin: 0; color: red;">Please enter a valid value!</p>
+          </div>
+        </div>
+  
+        <div class="form-group col-md-10 offset-md-1 text-center">
+          <label for="inputBodyPostsCreate"><strong>Body</strong></label>
+          <textarea formControlName="body" required type="textarea" rows="4" class="form-control" id="inputBodyPostsCreate" placeholder="Body of the post"></textarea>
+          <p *ngIf="addPost.get('body').invalid && addPost.get('body').touched" style="margin: 0; color: red;">Please enter a valid value!</p>
+        </div>
+  
+  
+        <button [disabled]="!addPost.get('user_id').valid || !addPost.get('title').valid || !addPost.get('body').valid" type="submit" class="btn btn1 mt-2 mb-2 btn-success">Save</button>
+      </form>
+    </div>
+  
+    <div class="row">
+      <div *ngFor="let post of posts; let i = index" class="col-10 col-md-8 offset-md-2 mt-5 mb-5" style="border-right: 5px dotted rgb(224, 224, 224);">
+  
+        <ul class="list-group">
+          <li class="list-group-item mb-3">
+            <div class="firstPost pb-1">
+              <span>Post {{i+1}}# by: 
+                <ng-container *ngIf="users">
+                <ng-container *ngFor="let user of users">
+                <strong *ngIf="user.id == post.user_id">{{user.first_name}} {{user.last_name}} ({{user.email}}) - 
+                  <em style="font-size: 18px;">'{{post.title}}'</em>
+                </strong>
+                </ng-container>
+                </ng-container>
+              </span>
+             
+            </div>
+  
+            <div style="word-wrap: break-word;" class="firstPostBody pt-2">
+              <p>{{post.body}}</p>
+            </div>
+  
+            <div class="firstPostDate pt-1">
+              <span>{{post.date}}</span>
+            </div>
+          </li>
+        </ul>
+  
+        <ul class="list-group comments mt-3">
+          <ng-container *ngFor="let com of comments">
+          <li *ngIf="post.id == com.post_id" class="list-group-item mb-3">
+            <div class="firstPost pb-1">
+              <span>Comment by: <strong>{{com.name}}</strong></span>
+            </div>
+  
+            <div class="firstPostBody pt-2">
+              <p>{{com.body}}</p>
+            </div>
+  
+            <div class="firstPostDate pt-1">
+              <span>{{com.date}}</span>
+            </div>
+          </li>
+          </ng-container>
+        </ul>
+  
+        <div style="border-radius: 40px;" class="addComment mt-4">
+          <form [formGroup]="addComment" (ngSubmit)="onSubmitComment(post.id)">
+            <h5 style="text-align: center; padding: 15px; border-bottom: 1px solid black;">Create Comment to Post {{i + 1}}#</h5>
+            <div class="form-row text-center">
+              <div class="form-group col-md-5 offset-md-1">
+                <label for="inputNameComCreate"><strong>Name</strong></label>
+                <input formControlName="name" required style="width: 90%" type="text" class="form-control" class="inputNameComCreate" placeholder="Name">
+                <p *ngIf="addComment.get('name').invalid && addComment.get('name').touched" style="margin: 0; color: red;">Please enter a valid value!</p>
+              </div>
+              <div class="form-group col-md-5">
+                <label for="inputEmailComCreate"><strong>Email</strong></label>
+                <input formControlName="email" required email style="width: 90%" type="email" class="form-control" class="inputEmailComCreate" placeholder="Email">
+                <p *ngIf="addComment.get('email').invalid && addComment.get('email').touched" style="margin: 0; color: red;">Please enter a valid value!</p>
+              </div>
+            </div>
+            <div class="form-group col-md-12 text-center">
+              <label for="inputBodyComCreate"><strong>Body</strong></label><br>
+              <textarea formControlName="body" required style="width: 80%" type="textarea" class="form-control" class="inputBodyComCreate" placeholder="Body of the comment"></textarea>
+              <p *ngIf="addComment.get('body').invalid && addComment.get('body').touched" style="margin: 0; color: red;">Please enter a valid value!</p>
+            </div>
+            <button [disabled]="!addComment.get('name').valid || !addComment.get('email').valid || !addComment.get('body').valid" type="submit" class="btn btn1 mt-2 mb-2 btn-success">Save</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
